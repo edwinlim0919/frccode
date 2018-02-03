@@ -37,18 +37,19 @@ public class Robot extends IterativeRobot
 	//double leftSpeed = joystickObject.fixController(Joysticks.leftJoySticky);
 	//double rightSpeed = joystickObject.fixController(Joysticks.leftJoySticky);
 	double JoyValue;
-	double rightSpeed = JoyValue;
-	double leftSpeed = -JoyValue;
+	double rightSpeed = -JoyValue;
+	double leftSpeed = JoyValue;
 	//This is the function that is called during the Tele-operated period
 	//This function runs periodically, meaning it acts as an infinite loop
 	@Override
 	public void teleopPeriodic() 
 	{
+		joystickObject.updateMainController();
+		JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
 		if(JoyValue >= 0.15 && JoyValue <= 1)
 		{
-			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 300)//straight
+			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 40)//straight
 			{
-				joystickObject.updateMainController();
 				JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
 				rightSpeed = -JoyValue;
 				leftSpeed = JoyValue;
@@ -60,14 +61,12 @@ public class Robot extends IterativeRobot
 			{
 				if(encodersObject.getRightEncoder() > encodersObject.getLeftEncoder())
 				{
-					joystickObject.updateMainController();
 					rightSpeed = rightSpeed + 0.05;
 					Motors.leftMotor.set(leftSpeed);
 					Motors.rightMotor.set(rightSpeed);
 				}
 				else
 				{
-					joystickObject.updateMainController();
 					leftSpeed = leftSpeed - 0.05;
 					Motors.leftMotor.set(leftSpeed);
 					Motors.rightMotor.set(rightSpeed);
@@ -76,9 +75,8 @@ public class Robot extends IterativeRobot
 		}
 		else if(JoyValue >= -1 && JoyValue <= -0.15)
 		{
-			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 300)
+			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 40)
 			{
-				joystickObject.updateMainController();
 				JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
 				rightSpeed = -JoyValue;
 				leftSpeed = JoyValue;
@@ -89,14 +87,12 @@ public class Robot extends IterativeRobot
 			{
 				if(encodersObject.getRightEncoder() < encodersObject.getLeftEncoder())
 				{
-					joystickObject.updateMainController();
 					rightSpeed = rightSpeed - 0.05;
 					Motors.leftMotor.set(leftSpeed);
 					Motors.rightMotor.set(rightSpeed);
 				}
 				else
 				{
-					joystickObject.updateMainController();
 					leftSpeed = leftSpeed + 0.05;
 					Motors.leftMotor.set(leftSpeed);
 					Motors.rightMotor.set(rightSpeed);
