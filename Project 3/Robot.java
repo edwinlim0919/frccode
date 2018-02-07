@@ -6,14 +6,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot 
 {
-	Encoders encodersObject;
+	Encoders enc;
 	Joysticks joystickObject;
 
 	//This function is run whenever the robot starts. This function is used for any initialization of code
 	@Override
 	public void robotInit() 
 	{
-		encodersObject = new Encoders();
+		enc = new Encoders();
 		joystickObject = new Joysticks();
 	}
 
@@ -34,85 +34,65 @@ public class Robot extends IterativeRobot
 		
 	}
 	
-	//right joyspeed = -joyvalue
-	//left joyspeed = joyvaue 
 	double JoyValue = 0;
-	double rightSpeed;
-	double leftSpeed;
+	double rEnc, lEnc;
 	//This is the function that is called during the Tele-operated period
 	//This function runs periodically, meaning it acts as an infinite loop
 	@Override
 	public void teleopPeriodic() 
 	{
-		if(JoyValue == 0)
+		rEnc = enc.getRightEncoder();
+		lEnc = enc.getLeftEncoder();
+		joystickObject.updateMainController();
+		if(Joysticks.leftJoySticky > 0)//move straight
 		{
-			joystickObject.updateMainController();
-			JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
-			rightSpeed = -JoyValue;
-			leftSpeed = JoyValue;
-			Motors.leftMotor.set(leftSpeed);
-			Motors.rightMotor.set(rightSpeed);
-		}
-		else if(JoyValue >= 0.15 && JoyValue <= 1)
-		{
-			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 20)//straight
+			if(Math.abs(lEnc-rEnc) < 10)//moving straight no correction needed
 			{
-				JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
-				rightSpeed = -JoyValue;
-				leftSpeed = JoyValue;
-				Motors.leftMotor.set(leftSpeed);
-				Motors.rightMotor.set(rightSpeed);
+				Motors.leftMotor.set(Joysticks.leftJoySticky);
+				Motors.rightMotor.set(-Joysticks.leftJoySticky);
 			}
-			else // not straight
+			else //correction
 			{
-				if(encodersObject.getRightEncoder() > encodersObject.getLeftEncoder())
+				if(rEnc > lEnc)
 				{
-					rightSpeed = rightSpeed + 0.05;
-					Motors.leftMotor.set(leftSpeed);
-					Motors.rightMotor.set(rightSpeed);
-				}
-				else if(encodersObject.getRightEncoder() < encodersObject.getLeftEncoder())
-				{
-					leftSpeed = leftSpeed - 0.05;
-					Motors.leftMotor.set(leftSpeed);
-					Motors.rightMotor.set(rightSpeed);
-				}
-			}
-		}
-		else if(JoyValue >= -1 && JoyValue <= -0.15)
-		{
-			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 20)
-			{
-				JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
-				rightSpeed = -JoyValue;
-				leftSpeed = JoyValue;
-				Motors.leftMotor.set(leftSpeed);
-				Motors.rightMotor.set(rightSpeed);
-			}
-			else
-			{
-				if(encodersObject.getRightEncoder() < encodersObject.getLeftEncoder())
-				{
-					rightSpeed = rightSpeed - 0.05;
-					Motors.leftMotor.set(leftSpeed);
-					Motors.rightMotor.set(rightSpeed);
+					Motors.leftMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky + .05);
 				}
 				else
 				{
-					leftSpeed = leftSpeed + 0.05;
-					Motors.leftMotor.set(leftSpeed);
-					Motors.rightMotor.set(rightSpeed);
+					Motors.leftMotor.set(Joysticks.leftJoySticky - .05);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky);
+				}
+			}
+		}
+		else if(Joysticks.leftJoySticky < 0) //move backward
+		{
+			if(Math.abs(lEnc - rEnc) < 10) //moving straight
+			{
+				Motors.leftMotor.set(Joysticks.leftJoySticky);
+				Motors.rightMotor.set(-Joysticks.leftJoySticky);
+			}
+			else //correction
+			{
+				if(lEnc > rEnc)
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(Joysticks.leftJoySticky - .05);
+				}
+				else
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky + .05);
+					Motors.rightMotor.set(Joysticks.leftJoySticky);
 				}
 			}
 		}
 		else
 		{
-			encodersObject.resetEncoders();
-			Motors.leftMotor.set(0);
-			Motors.rightMotor.set(0);
+			enc.resetEncoders();
+			Motors.leftMotor.set(Joysticks.rightJoyStickx);
+			Motors.leftMotor.set(-Joysticks.rightJoyStickx);
 		}
 	}
-
 	//This is the function that is called during the test
 	//Test is an option available in the driver station and can be used to test specific pieces of code.
 	//This function runs periodically, meaning it acts like an infinite loop
