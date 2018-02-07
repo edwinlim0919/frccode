@@ -34,28 +34,34 @@ public class Robot extends IterativeRobot
 		
 	}
 	
-	//double leftSpeed = joystickObject.fixController(Joysticks.leftJoySticky);
-	//double rightSpeed = joystickObject.fixController(Joysticks.leftJoySticky);
-	double JoyValue;
-	double rightSpeed = -JoyValue;
-	double leftSpeed = JoyValue;
+	//right joyspeed = -joyvalue
+	//left joyspeed = joyvaue 
+	double JoyValue = 0;
+	double rightSpeed;
+	double leftSpeed;
 	//This is the function that is called during the Tele-operated period
 	//This function runs periodically, meaning it acts as an infinite loop
 	@Override
 	public void teleopPeriodic() 
 	{
-		joystickObject.updateMainController();
-		JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
-		if(JoyValue >= 0.15 && JoyValue <= 1)
+		if(JoyValue == 0)
 		{
-			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 40)//straight
+			joystickObject.updateMainController();
+			JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
+			rightSpeed = -JoyValue;
+			leftSpeed = JoyValue;
+			Motors.leftMotor.set(leftSpeed);
+			Motors.rightMotor.set(rightSpeed);
+		}
+		else if(JoyValue >= 0.15 && JoyValue <= 1)
+		{
+			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 20)//straight
 			{
 				JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
 				rightSpeed = -JoyValue;
 				leftSpeed = JoyValue;
 				Motors.leftMotor.set(leftSpeed);
 				Motors.rightMotor.set(rightSpeed);
-				
 			}
 			else // not straight
 			{
@@ -65,7 +71,7 @@ public class Robot extends IterativeRobot
 					Motors.leftMotor.set(leftSpeed);
 					Motors.rightMotor.set(rightSpeed);
 				}
-				else
+				else if(encodersObject.getRightEncoder() < encodersObject.getLeftEncoder())
 				{
 					leftSpeed = leftSpeed - 0.05;
 					Motors.leftMotor.set(leftSpeed);
@@ -75,7 +81,7 @@ public class Robot extends IterativeRobot
 		}
 		else if(JoyValue >= -1 && JoyValue <= -0.15)
 		{
-			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 40)
+			if(Math.abs(encodersObject.getRightEncoder() - encodersObject.getLeftEncoder()) < 20)
 			{
 				JoyValue = joystickObject.fixController(Joysticks.leftJoySticky);
 				rightSpeed = -JoyValue;
