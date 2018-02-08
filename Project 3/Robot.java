@@ -34,64 +34,85 @@ public class Robot extends IterativeRobot
 		
 	}
 	
-	double rEnc, lEnc;
+	double lEnc, rEnc;
 	//This is the function that is called during the Tele-operated period
 	//This function runs periodically, meaning it acts as an infinite loop
 	@Override
 	public void teleopPeriodic() 
 	{
-		rEnc = enc.getRightEncoder();
 		lEnc = enc.getLeftEncoder();
+		rEnc = enc.getRightEncoder();
 		joystickObject.updateMainController();
-		if(Joysticks.leftJoySticky > 0)//move straight
+		if(Joysticks.leftJoySticky > 0) //go forward
 		{
-			if(Math.abs(lEnc-rEnc) < 10)//moving straight no correction needed
+			if(Joysticks.leftJoyStickx > 0) //turn right
 			{
 				Motors.leftMotor.set(Joysticks.leftJoySticky);
+				Motors.rightMotor.set(-Joysticks.leftJoySticky + (.5 * Joysticks.leftJoyStickx));
+			}
+			else if(Joysticks.leftJoyStickx < 0) //turn left
+			{
+				Motors.leftMotor.set(Joysticks.leftJoySticky + (.5 * Joysticks.leftJoyStickx));
 				Motors.rightMotor.set(-Joysticks.leftJoySticky);
 			}
-			else //correction
+			else //go straight
 			{
-				if(rEnc > lEnc)
+				if(Math.abs(lEnc - rEnc) < 20) //encoders equal
 				{
 					Motors.leftMotor.set(Joysticks.leftJoySticky);
-					Motors.rightMotor.set(-Joysticks.leftJoySticky + .05);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky);
 				}
-				else
+				else if(lEnc > rEnc) //left has gone farther
 				{
 					Motors.leftMotor.set(Joysticks.leftJoySticky - .05);
 					Motors.rightMotor.set(-Joysticks.leftJoySticky);
 				}
-			}
-		}
-		else if(Joysticks.leftJoySticky < 0) //move backward
-		{
-			if(Math.abs(lEnc - rEnc) < 10) //moving straight
-			{
-				Motors.leftMotor.set(Joysticks.leftJoySticky);
-				Motors.rightMotor.set(-Joysticks.leftJoySticky);
-			}
-			else //correction
-			{
-				if(lEnc > rEnc)
+				else //right has gone farther
 				{
 					Motors.leftMotor.set(Joysticks.leftJoySticky);
-					Motors.rightMotor.set(Joysticks.leftJoySticky - .05);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky + .05);
+				}
+			}
+		}
+		else if(Joysticks.leftJoySticky < 0) //go backward
+		{
+			if(Joysticks.leftJoyStickx > 0) //turn right 
+			{
+				Motors.leftMotor.set(Joysticks.leftJoySticky);
+				Motors.rightMotor.set(-Joysticks.leftJoySticky - (.5 * Joysticks.leftJoyStickx));
+			}
+			else if(Joysticks.leftJoyStickx < 0) //turn left 
+			{
+				Motors.leftMotor.set(Joysticks.leftJoySticky - (.5 * Joysticks.leftJoyStickx));
+				Motors.rightMotor.set(-Joysticks.leftJoySticky);
+			}
+			else //go straight
+			{
+				if(Math.abs(lEnc - rEnc) < 20)
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky);
+				}
+				else if(lEnc > rEnc)
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky - .05);
 				}
 				else
 				{
 					Motors.leftMotor.set(Joysticks.leftJoySticky + .05);
-					Motors.rightMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(-Joysticks.leftJoySticky);
 				}
 			}
 		}
-		else
-		{
+		else //staying still or stationary turning
+		{ 
 			enc.resetEncoders();
-			Motors.leftMotor.set(Joysticks.rightJoyStickx);
-			Motors.rightMotor.set(Joysticks.rightJoyStickx);
+			Motors.leftMotor.set(Joysticks.leftJoyStickx);
+			Motors.rightMotor.set(Joysticks.leftJoyStickx);
 		}
 	}
+
 	//This is the function that is called during the test
 	//Test is an option available in the driver station and can be used to test specific pieces of code.
 	//This function runs periodically, meaning it acts like an infinite loop
