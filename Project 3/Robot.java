@@ -89,7 +89,7 @@ public class Robot extends IterativeRobot
 		{
 			enc.resetEncoders();
 			Motors.leftMotor.set(Joysticks.rightJoyStickx);
-			Motors.leftMotor.set(-Joysticks.rightJoyStickx);
+			Motors.rightMotor.set(Joysticks.rightJoyStickx);
 		}
 	}
 	//This is the function that is called during the test
