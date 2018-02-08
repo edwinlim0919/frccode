@@ -34,7 +34,6 @@ public class Robot extends IterativeRobot
 		
 	}
 	
-	double JoyValue = 0;
 	double rEnc, lEnc;
 	//This is the function that is called during the Tele-operated period
 	//This function runs periodically, meaning it acts as an infinite loop

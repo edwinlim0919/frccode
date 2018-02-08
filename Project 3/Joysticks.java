@@ -26,14 +26,14 @@ public class Joysticks
 	{
 		rightBumper = mainController.getRawButton(6);
 		leftBumper = mainController.getRawButton(5);
-		leftTrigger = mainController.getRawAxis(2);
+		leftTrigger = fixController(mainController.getRawAxis(2));
 		buttonA = mainController.getRawButton(1);
 		buttonB = mainController.getRawButton(2);
-		rightTrigger = mainController.getRawAxis(3);
+		rightTrigger = fixController(mainController.getRawAxis(3));
 		buttonY = mainController.getRawButton(4);
-		leftJoySticky = -mainController.getRawAxis(1);
+		leftJoySticky = fixController(-mainController.getRawAxis(1));
 		leftJoyStickx = mainController.getRawAxis(0);
-		rightJoyStickx = mainController.getRawAxis(4);
+		rightJoyStickx = fixController(mainController.getRawAxis(4));
 		rightJoySticky = mainController.getRawAxis(5);
 		
 	}
