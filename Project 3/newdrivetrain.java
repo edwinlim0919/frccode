@@ -40,6 +40,7 @@ public class newdrivetrain extends IterativeRobot
 	@Override
 	public void teleopPeriodic() 
 	{
+		joystickObject.updateMainController();
 		lEnc = enc.getLeftEncoder();
 		rEnc = enc.getRightEncoder();
 		if(Joysticks.leftJoySticky > 0 && Joysticks.rightJoySticky > 0) //straight forward or turning while moving
@@ -96,11 +97,13 @@ public class newdrivetrain extends IterativeRobot
 		}
 		else if(Joysticks.leftJoySticky > 0 && Joysticks.rightJoySticky < 0) //fast turn right
 		{
-			
+			Motors.leftMotor.set(Joysticks.leftJoySticky);
+			Motors.rightMotor.set(-Joysticks.rightJoySticky);
 		}
 		else if(Joysticks.leftJoySticky < 0 && Joysticks.rightJoySticky > 0) //fast turn left
 		{
-			
+			Motors.leftMotor.set(Joysticks.leftJoySticky);
+			Motors.rightMotor.set(-Joysticks.rightJoySticky);
 		}
 		else //stay still
 		{
