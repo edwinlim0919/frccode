@@ -70,7 +70,29 @@ public class newdrivetrain extends IterativeRobot
 		}
 		else if(Joysticks.leftJoySticky < 0 && Joysticks.rightJoySticky < 0) //straight backwards or turning while moving 
 		{
-			
+			if(Math.abs(Joysticks.leftJoySticky - Joysticks.rightJoySticky) < 0.1)
+			{
+				if(Math.abs(lEnc - rEnc) < 20)
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(-Joysticks.rightJoySticky);
+				}
+				else if(lEnc > rEnc)
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky);
+					Motors.rightMotor.set(-Joysticks.rightJoySticky - 0.05);
+				}
+				else
+				{
+					Motors.leftMotor.set(Joysticks.leftJoySticky + 0.05);
+					Motors.rightMotor.set(-Joysticks.rightJoySticky);
+				}
+			}
+			else
+			{
+				Motors.leftMotor.set(Joysticks.leftJoySticky);
+				Motors.rightMotor.set(-Joysticks.rightJoySticky);
+			}
 		}
 		else if(Joysticks.leftJoySticky > 0 && Joysticks.rightJoySticky < 0) //fast turn right
 		{
